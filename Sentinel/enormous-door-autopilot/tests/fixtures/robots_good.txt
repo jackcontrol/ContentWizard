@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /config
+Disallow: /api
+Sitemap: https://enormousdoor.com/sitemap.xml

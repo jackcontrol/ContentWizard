@@ -1,0 +1,48 @@
+name: Content Engine (weekly)
+
+on:
+  schedule:
+    - cron: "23 15 * * 1"   # Mondays 15:23 UTC ≈ 10:23 AM Austin — an hour after the visibility panel
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  content:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run content engine
+        id: run
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python content_engine.py
+          echo "drafted=$([ -f content_alert.md ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Commit drafts
+        run: |
+          git config user.name "sentinel-bot"
+          git config user.email "sentinel-bot@users.noreply.github.com"
+          git add -A content-drafts social-drafts state content_alert.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "content: weekly draft $(date -u +%F)"
+          git push
+
+      - name: Open weekly content issue
+        if: steps.run.outputs.drafted == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create content-ready --color 0E8A16 \
+            --description "Weekly content drafted, ready to paste" 2>/dev/null || true
+          gh issue create \
+            --title "📝 Weekly content ready — $(date -u +%F)" \
+            --body-file content_alert.md --label content-ready

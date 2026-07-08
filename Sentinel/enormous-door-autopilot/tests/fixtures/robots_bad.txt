@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /technical-faq
+User-agent: GPTBot
+Disallow: /
+Sitemap: https://enormousdoor.com/sitemap.xml

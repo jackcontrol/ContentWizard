@@ -1,0 +1,3 @@
+# For running the MCP server + local checks on your own machine.
+-r requirements.txt
+mcp>=1.0

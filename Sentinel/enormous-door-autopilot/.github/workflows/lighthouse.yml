@@ -1,0 +1,53 @@
+name: Lighthouse Audit (monthly)
+
+on:
+  schedule:
+    - cron: "41 9 3 * *"    # 3rd of each month, 09:41 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run Lighthouse on key pages
+        run: |
+          mkdir -p lh-out
+          for path in "/" "/pricing" "/launch-contact" "/technical-faq" "/vinyl-mastering"; do
+            slug=$(echo "$path" | sed 's#/#_#g'); [ "$slug" = "_" ] && slug="home"
+            npx --yes lighthouse "https://enormousdoor.com${path}" \
+              --output=json --output-path="lh-out/${slug}.json" \
+              --only-categories=performance,seo,accessibility,best-practices \
+              --chrome-flags="--headless --no-sandbox" --quiet || true
+          done
+
+      - name: Summarize + threshold check
+        id: perf
+        run: |
+          python perf_summary.py
+          echo "breach=$([ -f perf_alert.md ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Commit trend + report
+        run: |
+          git config user.name "sentinel-bot"
+          git config user.email "sentinel-bot@users.noreply.github.com"
+          git add -A state reports perf_alert.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "lighthouse: monthly audit $(date -u +%F)"
+          git push
+
+      - name: Open issue on threshold breach
+        if: steps.perf.outputs.breach == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create perf-alert --color FBCA04 2>/dev/null || true
+          gh issue create --title "🐢 Lighthouse threshold breach — $(date -u +%F)" \
+            --body-file perf_alert.md --label perf-alert

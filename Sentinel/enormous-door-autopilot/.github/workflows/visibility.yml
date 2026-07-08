@@ -1,0 +1,58 @@
+name: AI Visibility Panel (weekly)
+
+on:
+  schedule:
+    - cron: "23 14 * * 1"   # Mondays 14:23 UTC ≈ 9:23 AM Austin
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  panel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run 24-question visibility panel
+        id: panel
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python visibility_probe.py
+          echo "drop=$([ -f visibility_alert.md ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Optional — pull real Search Console data
+        env:
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+          GSC_SITE_URL: ${{ secrets.GSC_SITE_URL }}
+        run: |
+          if [ -n "$GSC_SERVICE_ACCOUNT_JSON" ]; then
+            pip install -q google-api-python-client google-auth
+            python search_console_pull.py
+          else
+            echo "GSC secrets not configured — skipping."
+          fi
+
+      - name: Commit results
+        run: |
+          git config user.name "sentinel-bot"
+          git config user.email "sentinel-bot@users.noreply.github.com"
+          git add -A state reports visibility_alert.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "visibility: weekly panel $(date -u +%F)"
+          git push
+
+      - name: Alert on share-of-voice drop
+        if: steps.panel.outputs.drop == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create visibility-alert --color 5319E7 2>/dev/null || true
+          gh issue create --title "📉 AI share of voice dropped — $(date -u +%F)" \
+            --body-file visibility_alert.md --label visibility-alert

@@ -1,0 +1,300 @@
+# ============================================================
+# ENORMOUS DOOR MASTERING — SITE CONTRACT
+# ============================================================
+# This file is the single source of truth for what MUST be true
+# on the live site. The sentinel checks the live site against it
+# every night and alerts only on confirmed violations.
+#
+# HOW TO UPDATE (e.g., a future price change):
+#   1. Edit the values here (prices appear in `required_patterns`,
+#      `jsonld.prices_required`, and `estimator_patterns` below).
+#   2. Move the OLD values into `forbidden_patterns` /
+#      `jsonld.prices_forbidden` so stale copies get caught.
+#   3. Commit. The next run enforces the new truth in all three
+#      places the handoff identifies (table, estimator, schema).
+#
+# Severity: everything in this contract is enforced as FAIL
+# unless listed under a `warn_*` key.
+# ============================================================
+
+site:
+  canonical_base: "https://enormousdoor.com"
+  # Hosts treated as "internal" when normalizing link targets:
+  internal_hosts: ["enormousdoor.com", "www.enormousdoor.com"]
+  sitemap_url: "https://enormousdoor.com/sitemap.xml"
+  # Seconds to wait before the confirmation re-fetch of a failure:
+  confirm_delay_seconds: 45
+  user_agent: "EnormousDoorSentinel/1.0 (site owner monitoring; contact: site owner)"
+
+# ---- robots.txt guardrails -------------------------------------
+robots:
+  # Every monitored page path must be crawlable for each of these
+  # user agents. This is the check that would have caught the
+  # /technical-faq crawler block within one night.
+  agents_must_allow:
+    - "*"
+    - "Googlebot"
+    - "Bingbot"
+    - "GPTBot"
+    - "OAI-SearchBot"
+    - "ClaudeBot"
+    - "Claude-Web"
+    - "anthropic-ai"
+    - "PerplexityBot"
+    - "Google-Extended"
+  # Warn (don't fail) if these are blocked — some owners block them
+  # deliberately; edit to taste:
+  agents_warn_if_blocked:
+    - "CCBot"
+
+# ---- Global JSON-LD guardrails (from the handoff) ---------------
+jsonld_global:
+  forbidden_types:            # never allowed anywhere, per guardrails
+    - "Review"
+    - "AggregateRating"
+    - "VideoObject"
+
+# ---- Retired URLs must stay dead --------------------------------
+retired_pages:
+  - path: "/test"
+  - path: "/faqs"
+  # Expectation: anything EXCEPT a 200 page at the original URL.
+  # A 301/302 redirect or a 404/410 both pass.
+
+# ---- Monitored pages --------------------------------------------
+# Field reference:
+#   title_contains      : substring that must appear in <title>
+#   h1                  : exact H1 text (whitespace-normalized). null = only
+#                         enforce "exactly one H1", capture text to baseline.
+#   required_links      : internal targets (path[#fragment]) or full external
+#                         URLs that must exist as an <a href> on the page
+#   required_patterns   : regexes that must match the raw HTML
+#   forbidden_patterns  : regexes that must NOT match the raw HTML
+#   anchor_ids_required : element id= values that must exist (anchor targets)
+#   jsonld:
+#     types_expected    : @type values that must be present
+#     type_counts       : exact count for a given @type (optional)
+#     prices_required   : values that must appear as a price in JSON-LD
+#     prices_forbidden  : price values that must never appear
+#   noindex_allowed     : true only for pages intentionally hidden
+
+pages:
+
+  - path: "/"
+    name: "Homepage"
+    title_contains: "Heavy Music Mastering | Enormous Door Mastering"
+    h1: "HEAVY MUSIC MASTERING"
+    required_links:
+      - "/launch-contact"
+      - "/pricing"
+      - "/beyond-heavy"
+      - "/technical-faq#mix-prep"
+    jsonld:
+      types_expected: ["Organization", "LocalBusiness", "WebSite"]
+
+  - path: "/pricing"
+    name: "Pricing"
+    title_contains: "Heavy Music Mastering Pricing | Enormous Door Mastering"
+    h1: "HEAVY MUSIC MASTERING PRICING"
+    required_links:
+      - "/launch-contact"
+      - "/technical-faq#mix-prep"
+    # Current verified pricing (2026-07-06 correction is live):
+    required_patterns:
+      - '\$500'          # LP/45 Single-Format Master
+      - '\$600'          # LP/45 Full Release Package
+      - '\$850'          # Beyond Heavy LP/45
+      - '\$150'          # Single 0-5 min, Single-Format
+      - '\$1500'         # Double LP/120 Beyond Heavy
+    # The old LP/45 values must never reappear anywhere on the page
+    # (visible table OR estimator JS OR embedded schema):
+    forbidden_patterns:
+      - '\$520'
+      - '\$620'
+      - '["'':>\s]520\s*USD'
+      - '["'':>\s]620\s*USD'
+      - '"price"\s*:\s*"?520'
+      - '"price"\s*:\s*"?620'
+    # Estimator JavaScript must carry the corrected LP/45 values:
+    estimator_patterns:
+      - 'lp45[\s\S]{0,120}?singleformat\s*:\s*500'
+      - 'lp45[\s\S]{0,120}?full\s*:\s*600'
+    jsonld:
+      types_expected: ["WebPage", "Organization", "LocalBusiness", "BreadcrumbList", "WebSite", "Service", "FAQPage"]
+      type_counts:
+        Service: 2
+      prices_required: ["500", "600", "850"]
+      prices_forbidden: ["520", "620"]
+
+  - path: "/beyond-heavy"
+    name: "Beyond Heavy"
+    title_contains: "Beyond Heavy Mastering | Jack Control + Maor Appelbaum"
+    h1: "BEYOND HEAVY MASTERING"
+    required_links:
+      - "/launch-contact"
+      - "/pricing"
+      - "/technical-faq#mix-prep"
+    jsonld:
+      types_expected: ["WebPage", "Organization", "LocalBusiness", "BreadcrumbList", "WebSite", "FAQPage"]
+
+  - path: "/launch-contact"
+    name: "Launch Contact"
+    title_contains: "Start Your Project | Mixing & Heavy Music Mastering"
+    h1: "START YOUR PROJECT"
+    required_links:
+      - "/technical-faq#mix-prep"
+    # Conversion-integrity: the intake form's key fields/options must be
+    # present in the served HTML. If Squarespace drops or breaks the form
+    # block, this fires the same night.
+    required_patterns:
+      - 'Band Name'
+      - 'Service Desired'
+      - 'Mixing and Mastering'
+      - 'Beyond Heavy'
+      - 'SEND PROJECT DETAILS'
+    jsonld:
+      types_expected: ["Organization", "LocalBusiness", "ContactPage", "WebSite"]
+
+  - path: "/technical-faq"
+    name: "Technical FAQ / Mix Prep"
+    title_contains: "Mix Prep for Mastering | Heavy Music Mastering Specs"
+    h1: "MIX PREP & DELIVERY SPECS"
+    required_links:
+      - "/launch-contact"
+      - "/pricing"
+      - "https://enormousdoor.wetransfer.com"
+    # Every page on the site links to /technical-faq#mix-prep, so the
+    # anchor target must actually exist here or those links dead-jump:
+    anchor_ids_required: ["mix-prep"]
+    jsonld:
+      types_expected: ["Organization", "LocalBusiness", "WebSite"]
+
+  - path: "/mixing"
+    name: "Mixing"
+    title_contains: "Heavy Music Mixing | Enormous Door Mixing Team"
+    h1: "HEAVY MUSIC MIXING"
+    required_links:
+      - "/launch-contact"
+    jsonld:
+      types_expected: ["Organization", "LocalBusiness", "WebSite"]
+
+  - path: "/vinyl-mastering"
+    name: "Vinyl Mastering"
+    h1: "VINYL MASTERING"
+    required_links:
+      - "/launch-contact"
+      - "/pricing"
+      - "/technical-faq#mix-prep"
+      - "/vinyl-times"
+
+  - path: "/vinyl-pressing"
+    name: "Vinyl Pressing"
+    h1: "VINYL PRESSING"
+    # Helios links here are INTENTIONAL (pressing projects that need
+    # mastering route to Enormous Door by default). No internal CTA
+    # requirements enforced; page is monitored for uptime/H1/drift.
+
+  - path: "/vinyl-times"
+    name: "Vinyl Times / Side Length Guide"
+    h1: null            # enforce single H1 only; capture text to baseline
+
+  - path: "/how-to-proceed"
+    name: "How To Proceed"
+    h1: null
+    required_links:
+      - "/launch-contact"
+      - "/technical-faq#mix-prep"
+
+  - path: "/clients"
+    name: "Clients"
+    h1: null
+
+  - path: "/gear"
+    name: "Gear"
+    h1: null
+
+  - path: "/about"
+    name: "About"
+    h1: null
+
+# ---- Cross-page rules -------------------------------------------
+cross_page:
+  # No two pages may share the same H1 (keyword cannibalization):
+  unique_h1: true
+  # Canonical tags should sit on the non-www host (warn-level):
+  warn_canonical_host: "enormousdoor.com"
+
+# ---- Security & conversion integrity (deterministic, free) ------
+security:
+  ssl_expiry_warn_days: 21
+  response_time_warn_ms: 5000
+  drastic_change_fail_pct: 60      # defacement alarm threshold
+  required_headers_warn: ["strict-transport-security"]
+  external_links_must_resolve:
+    - url: "https://enormousdoor.wetransfer.com/"
+      fail: true                    # the upload path — conversion-critical
+    - "https://heliospressing.com"
+
+# ---- Weekly AI-visibility panel (API spend, opted-in) ------------
+# 24 questions across five buyer-intent categories. Every question
+# where the brand is NOT mentioned becomes a content-engine target.
+visibility:
+  brand_terms: ["Enormous Door", "Jack Control", "enormousdoor.com", "Beyond Heavy"]
+  share_drop_alert: 3    # alert if mentions drop by this many vs. previous run
+  questions:
+    # -- discovery: genre × need --
+    - {category: discovery, q: "Who should master my black metal LP for vinyl?"}
+    - {category: discovery, q: "Best mastering engineer for hardcore punk records"}
+    - {category: discovery, q: "Mastering engineer recommendations for a death metal album"}
+    - {category: discovery, q: "Who does the best doom metal mastering?"}
+    - {category: discovery, q: "Best mastering service for grindcore and powerviolence"}
+    - {category: discovery, q: "Mastering engineer for a punk 7 inch record"}
+    - {category: discovery, q: "Who should master a crust punk LP?"}
+    # -- pricing --
+    - {category: pricing, q: "How much does vinyl mastering cost for a 45 minute album?"}
+    - {category: pricing, q: "How much should I pay to master a 5 song metal EP?"}
+    - {category: pricing, q: "Album mastering cost for vinyl, streaming, and cassette together"}
+    - {category: pricing, q: "What does professional heavy music mastering cost in 2026?"}
+    # -- process / prep (mix-prep authority) --
+    - {category: process, q: "How should I prepare final mixes for vinyl mastering?"}
+    - {category: process, q: "How much headroom should I leave for mastering?"}
+    - {category: process, q: "Should I remove the limiter before sending mixes to mastering?"}
+    - {category: process, q: "How many minutes fit on a 12 inch vinyl record at 45 RPM?"}
+    - {category: process, q: "What files should I send a mastering engineer for a CD and vinyl release?"}
+    # -- brand --
+    - {category: brand, q: "What is Beyond Heavy mastering?"}
+    - {category: brand, q: "Who is Jack Control mastering engineer?"}
+    - {category: brand, q: "Is Enormous Door Mastering good for metal records?"}
+    - {category: brand, q: "Enormous Door Mastering reviews"}
+    # -- comparison / commercial intent --
+    - {category: comparison, q: "Best mastering studios for heavy metal in the US"}
+    - {category: comparison, q: "Online mastering service vs dedicated heavy music mastering engineer"}
+    - {category: comparison, q: "Best mastering engineer for bands releasing on Bandcamp and streaming"}
+    - {category: comparison, q: "Mastering engineers famous punk bands use"}
+
+# ---- Weekly content engine (API spend, opted-in) ------------------
+content:
+  # One page draft + social drafts per week. Targets are chosen from
+  # visibility gaps first (questions where the brand wasn't mentioned),
+  # then from this backlog. Drafts are committed to content-drafts/
+  # and surfaced in a GitHub Issue — publishing to Squarespace stays
+  # a human paste (Squarespace has no page-creation API).
+  topics_backlog:
+    - "Vinyl mastering FAQ: side lengths, loudness on vinyl, do I need a separate vinyl master"
+    - "Cassette mastering guide for underground releases"
+    - "How loud should a metal master be? LUFS, streaming normalization, and why fake loudness fails"
+    - "CD vs DDP: what your pressing plant actually needs"
+    - "Mastering for Bandcamp vs streaming: format strategy for DIY heavy bands"
+    - "What a mastering engineer actually does to a punk record"
+    - "Remastering old releases for vinyl reissues"
+  site_voice: >
+    Direct, heavy, credible, underground. Black/white/red/gold energy.
+    No corporate filler, no hype adjectives, no exclamation points.
+    Facts a crawler can quote: numbers, formats, named specs. Every
+    piece routes readers to /launch-contact, cites /pricing where
+    money is discussed, and routes file-prep detail to
+    /technical-faq#mix-prep rather than duplicating it.
+  social_platforms_note: >
+    Social drafts are written for scheduling via OneUp (connected in
+    Claude). Ask Claude: "schedule this week's sentinel social drafts
+    through OneUp" — it reads them via the MCP server and schedules.

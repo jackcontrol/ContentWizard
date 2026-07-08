@@ -1,0 +1,74 @@
+name: Site Sentinel (nightly)
+
+on:
+  schedule:
+    # 08:17 UTC ≈ 3:17 AM in Austin during daylight time — quiet hours,
+    # odd minute to avoid the top-of-hour cron stampede.
+    - cron: "17 8 * * *"
+  workflow_dispatch: {}   # allows manual "Run workflow" button
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: sentinel
+  cancel-in-progress: false
+
+jobs:
+  sentinel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run sentinel
+        id: run
+        run: |
+          python sentinel.py --contract site_contract.yaml
+          echo "alert=$([ -f alert.md ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Commit state, reports, STATUS.md
+        run: |
+          git config user.name "sentinel-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A state reports STATUS.md alert.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "sentinel: run $(date -u +%F)"
+          git push
+
+      - name: Open or update alert issue (emails you)
+        if: steps.run.outputs.alert == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create sentinel-alert --color D73A4A \
+            --description "Confirmed site sentinel failure" 2>/dev/null || true
+          existing=$(gh issue list --label sentinel-alert --state open \
+            --json number --jq '.[0].number' 2>/dev/null || true)
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file alert.md
+          else
+            gh issue create \
+              --title "🔴 Site Sentinel: confirmed issue(s) on enormousdoor.com" \
+              --body-file alert.md --label sentinel-alert
+          fi
+          # Fail the job so GitHub also sends a workflow-failure email.
+          exit 1
+
+      - name: Auto-close resolved alert issue
+        if: steps.run.outputs.alert == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing=$(gh issue list --label sentinel-alert --state open \
+            --json number --jq '.[0].number' 2>/dev/null || true)
+          if [ -n "$existing" ]; then
+            gh issue close "$existing" \
+              --comment "🟢 Sentinel run is clean — previously reported issue(s) no longer reproduce."
+          fi
