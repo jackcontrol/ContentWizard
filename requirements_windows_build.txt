@@ -1,0 +1,10 @@
+pillow
+numpy
+moviepy
+imageio
+imageio-ffmpeg
+proglog
+decorator
+tkinterdnd2
+pytesseract
+pyinstaller

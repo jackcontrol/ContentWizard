@@ -1,0 +1,132 @@
+Enormous Door Content Wizard
+Version: 3.0.0-optimized
+Build date: 2026-03-27
+
+══════════════════════════════════════════════════════════════
+ WHAT'S NEW IN v3.0.0
+══════════════════════════════════════════════════════════════
+
+── CAPTION TIMING — Text appears exactly when you want it ────
+
+  The biggest gap from v2 is now fully implemented.
+  In step 4 (Polish Your Post) → right panel → CAPTION TIMING section:
+
+  For a 20-second before/after video where audio changes at 10s:
+
+    1. Select the clip in the strip above
+    2. Add event 1:
+         Text:       BEFORE MASTERING
+         Appears at: 0.0s
+         Until:      10.0s
+         Position:   Bottom Center
+    3. Add event 2:
+         Text:       AFTER MASTERING
+         Appears at: 10.0s
+         Until:      0 (plays to end)
+         Position:   Bottom Center
+    4. The preview immediately shows both text blocks
+       with their timecodes labelled on the frame
+
+  Multiple events per clip. Remove any event with ✕.
+  Per-event: text, start, end, position, style, emphasis.
+
+── CAPTION TEXT NOW ALWAYS SHOWS IN PREVIEW ─────────────────
+
+  Previously the preview could show a frame with no text overlay
+  even when Hook/Title/CTA were set. Fixed:
+
+  - Preview now builds an explicit role→text map from live project
+    state (hook_text for hook clips, title_text for proof clips, etc.)
+  - Text is always passed explicitly to the overlay renderer —
+    no more silent empty renders
+  - Caption events added in Polish step carry through to the
+    animated preview via a live card lookup bridge
+
+── FONT & VISUAL STYLE ──────────────────────────────────────
+
+  • Font family selector: Default / Bold Sans / Clean Sans /
+    Condensed / Thin Modern — per-card, not global
+  • Caption style: 4 presets with custom_accent support
+  • Text size: radio buttons (Subtle 14pt / Standard 18pt /
+    Punchy 22pt / Trailer 26pt)
+  • All settings have inline beginner tooltips
+
+── FRAME POSITION — 6 options + Custom XY ────────────────────
+
+  New positions added:
+  • Bottom Left  — safe from Reels sidebar interaction buttons
+  • Top Center   — high-impact, with safe-zone warning tooltip
+  • Custom XY    — place text anywhere using X/Y coordinates
+
+  Both preview panels (Review Drafts + Quick Refine) now
+  correctly render all 6 positions.
+
+── REFERENCE STYLE EXTRACTION ───────────────────────────────
+
+  Add a reference image on step 2. Dominant accent color is
+  extracted automatically. In step 4:
+  • The Reference Accent Color swatch shows the extracted color
+  • Click "Apply to Caption" — that color replaces the accent
+    bar on all caption presets instantly
+  • Both preview panels reflect the change immediately
+
+── SAFE ZONE VISUALIZATION ──────────────────────────────────
+
+  Preview overlay now shows:
+  • Purple bands = UI-restricted area (platform buttons live here)
+  • Yellow box = caption safe area (where text will actually sit)
+  • Cyan box = subject focus area
+  • Red crosshair = crop focus point
+  • Platform name + restriction description printed on frame
+
+  Platform descriptions (e.g. "Bottom 25% reserved for Reels
+  interaction buttons") also shown inline below the Platform
+  dropdown in step 4.
+
+── BEGINNER UX ───────────────────────────────────────────────
+
+  • Step 4 right panel is fully scrollable — nothing hidden
+  • Every control has a one-line ↳ tooltip below it
+  • Section headers color-coded: Gold=timing, Blue=font/style
+  • LOOKS GOOD button is large, red, always visible at bottom
+  • Simple Mode: timing + style visible; clip controls hidden
+  • Terminology cleaned up throughout:
+      "Caption pacing"   → "Text size"
+      "Duration override"→ "Clip length (sec)"
+      "Crop focus X/Y"   → "Crop left↔right / top↕bottom"
+
+══════════════════════════════════════════════════════════════
+ INSTALL STEPS
+══════════════════════════════════════════════════════════════
+
+  1. Copy EnormousDoorContentWizard.py to C:\ContentWizard\
+  2. Double-click build_EnormousDoor_v3.0.bat
+  3. EXE lands at:
+     C:\ContentWizard\dist\EnormousDoorContentWizard\
+         EnormousDoorContentWizard.exe
+
+══════════════════════════════════════════════════════════════
+ TECHNICAL SUMMARY
+══════════════════════════════════════════════════════════════
+
+  New data model:
+  • CaptionEvent dataclass: text, start_sec, end_sec,
+    position, style, emphasis, font_family
+  • StoryboardCard: caption_events[], caption_font_family,
+    text_position_x/y
+  • ProjectState: reference_accent_color, reference_font_hint
+  • CAPTION_POSITION_PRESETS: +Bottom Left, +Top Center,
+    +Custom XY
+  • CAPTION_FONT_FAMILIES dict
+  • PLATFORM_SAFE_ZONE_DESCRIPTIONS dict
+
+  Rendering pipeline:
+  • _apply_overlays(): renders all CaptionEvents with timing
+    labels; accepts fallback_caption_text; passes custom_accent
+  • _resolve_caption_box(): handles all 6 positions incl. Custom XY
+  • _draw_caption_mock(): respects custom_accent + font family
+  • DraftOutputPreviewPanel.render(): bridges selected_storyboard
+    caption_events to DraftOption cards via asset_id lookup;
+    always passes non-empty fallback caption text
+  • Both _draw_caption_mock instances use custom_accent
+  • ComparisonPreviewPanel._resolve_caption_box: all 6 positions
