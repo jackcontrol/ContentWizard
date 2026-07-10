@@ -49,6 +49,7 @@ jobs:
           git config user.email "sentinel-bot@users.noreply.github.com"
           git add -A state reports visibility_alert.md 2>/dev/null || true
           git diff --cached --quiet || git commit -m "visibility: weekly panel $(date -u +%F)"
+          git pull --rebase origin main
           git push
 
       - name: Alert on share-of-voice drop
