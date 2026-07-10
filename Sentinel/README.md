@@ -12,21 +12,23 @@ to talk to it.
 |---|---|---|---|
 | **Site Sentinel** — routing, pricing×3, schema guardrails, H1/titles, robots + AI-crawler access, retired pages, diffs | Nightly 3:17 AM | Deterministic | Free |
 | **Security suite** — SSL expiry, mixed content, HSTS, response-time budget, WeTransfer/Helios links, defacement alarm, intake-form integrity | Rides with sentinel | Deterministic | Free |
-| **AI Visibility Panel** — 24 buyer questions × 5 categories, share-of-voice trendline, drop alerts, gap export | Weekly Mon AM | Claude + web search | ~cents–few $/run* |
-| **Content Engine** — 1 paste-ready page draft + 4 social drafts/week, targeted at visibility gaps | Weekly Mon AM | Claude | ~cents/run* |
+| **AI Visibility Panel** — 24 buyer questions × 5 categories, share-of-voice trendline, drop alerts, gap export | Weekly Mon AM | Groq compound + web search | Free* |
+| **Content Engine** — 1 paste-ready page draft + 4 social drafts/week, targeted at visibility gaps | Weekly Mon AM | Groq | Free* |
 | **Lighthouse Audit** — perf/SEO/accessibility scores, regression thresholds | Monthly | Deterministic | Free |
 | **Search Console pull** (optional) — real queries/clicks/positions trendline | Weekly | Deterministic | Free |
 | **MCP server** — 12 on-demand tools for Claude Desktop/Code | On demand | Your Claude session | No scheduled spend |
 
-\* Verify current model pricing at https://docs.claude.com/en/api/overview.
-A realistic total for both weekly AI jobs is a few dollars per month.
+\* Both AI jobs run on the Groq free tier (no card, rate-limited at
+30 req/min / 250 req/day for compound models) — well within the weekly
+24-question panel and one draft run. Verify limits at
+https://console.groq.com/docs/rate-limits.
 
 ## Setup (~15 minutes)
 
 1. **Create a private GitHub repo**, push this folder to its root
    (including the hidden `.github/` directory).
-2. **Add secret** `ANTHROPIC_API_KEY` (repo Settings → Secrets → Actions)
-   — key from https://console.anthropic.com. This powers the visibility
+2. **Add secret** `GROQ_API_KEY` (repo Settings → Secrets → Actions)
+   — free key from https://console.groq.com. This powers the visibility
    panel and content engine. Everything else runs without it.
 3. Enable Actions notifications for failures (GitHub Settings →
    Notifications). Alerts also arrive as labeled GitHub Issues:

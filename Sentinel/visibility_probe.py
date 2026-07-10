@@ -2,9 +2,9 @@
 """
 AI-Visibility Panel v2 (weekly, API spend opted-in)
 ===================================================
-Asks Claude (with web search) the 24 buyer-intent questions in
-site_contract.yaml -> visibility.questions and records, per category,
-whether Enormous Door is mentioned and in what context.
+Asks a Groq compound model (with built-in web search) the 24 buyer-intent
+questions in site_contract.yaml -> visibility.questions and records, per
+category, whether Enormous Door is mentioned and in what context.
 
 Outputs:
   state/visibility.csv        — one row per question per run (trendline)
@@ -16,9 +16,12 @@ Outputs:
                                 by >= visibility.share_drop_alert vs the
                                 previous run (workflow opens an issue)
 
-Requires ANTHROPIC_API_KEY (repo secret). Exits 0 quietly without it.
-Model default claude-sonnet-4-6 (override with VISIBILITY_MODEL).
-Verify current model names/pricing: https://docs.claude.com/en/api/overview
+Requires GROQ_API_KEY (repo secret, free at https://console.groq.com).
+Exits 0 quietly without it.
+Model default groq/compound-mini — Groq's compound systems run web search
+server-side, which this probe needs to reflect real web-grounded answers.
+Plain llama models on Groq have NO web search; keep VISIBILITY_MODEL set
+to a compound model. Docs: https://console.groq.com/docs/compound
 """
 
 from __future__ import annotations
@@ -35,8 +38,8 @@ from pathlib import Path
 import requests
 import yaml
 
-API_URL = "https://api.anthropic.com/v1/messages"
-MODEL = os.environ.get("VISIBILITY_MODEL", "claude-sonnet-4-6")
+API_URL = "https://api.groq.com/openai/v1/chat/completions"
+MODEL = os.environ.get("VISIBILITY_MODEL", "groq/compound-mini")
 
 
 def ask(question: str, api_key: str) -> str:
@@ -50,23 +53,20 @@ def ask(question: str, api_key: str) -> str:
                 "naming the specific services/engineers you would actually recommend."
             ),
         }],
-        "tools": [{"type": "web_search_20250305", "name": "web_search"}],
     }
     for attempt in range(3):
         try:
             r = requests.post(API_URL, json=body, timeout=180, headers={
-                "x-api-key": api_key,
-                "anthropic-version": "2023-06-01",
-                "content-type": "application/json",
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
             })
             if r.status_code == 429:           # rate limited — back off
                 time.sleep(20 * (attempt + 1))
                 continue
             r.raise_for_status()
             data = r.json()
-            return "\n".join(b.get("text", "") for b in data.get("content", [])
-                             if b.get("type") == "text")
-        except requests.RequestException as exc:
+            return data["choices"][0]["message"]["content"] or ""
+        except (requests.RequestException, KeyError, IndexError) as exc:
             if attempt == 2:
                 return f"[probe error: {exc}]"
             time.sleep(10)
@@ -87,9 +87,9 @@ def previous_mentions(csv_path: Path) -> int | None:
 
 
 def main() -> int:
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    api_key = os.environ.get("GROQ_API_KEY", "").strip()
     if not api_key:
-        print("visibility: ANTHROPIC_API_KEY not set — skipping (optional module).")
+        print("visibility: GROQ_API_KEY not set — skipping (optional module).")
         return 0
 
     contract = yaml.safe_load(Path("site_contract.yaml").read_text())

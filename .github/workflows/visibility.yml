@@ -12,6 +12,9 @@ permissions:
 jobs:
   panel:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Sentinel
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,7 +26,7 @@ jobs:
       - name: Run 24-question visibility panel
         id: panel
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           python visibility_probe.py
           echo "drop=$([ -f visibility_alert.md ] && echo true || echo false)" >> "$GITHUB_OUTPUT"

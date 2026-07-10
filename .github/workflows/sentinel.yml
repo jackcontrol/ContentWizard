@@ -18,6 +18,9 @@ concurrency:
 jobs:
   sentinel:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Sentinel
     steps:
       - uses: actions/checkout@v4
 

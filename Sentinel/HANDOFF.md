@@ -130,7 +130,7 @@ Alert channels (GitHub Issues, auto-close on recovery): `sentinel-alert`,
 
 **Deployment status at handoff:** code complete and self-tested; NOT yet
 deployed. Remaining human steps: create private GitHub repo → push folder
-(incl. `.github/`) → add `ANTHROPIC_API_KEY` secret → run each workflow
+(incl. `.github/`) → add `GROQ_API_KEY` secret → run each workflow
 once to baseline → configure MCP per README.
 
 **Weekly human loop (~10 min):** paste the drafted page into Squarespace,
