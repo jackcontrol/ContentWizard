@@ -1,4 +1,4 @@
-# Sentinel run — 2026-07-12 10:03 UTC
+# Sentinel run — 2026-07-13 11:30 UTC
 
 Result: **🔴 15 confirmed issue(s)** · 2 warning(s) · 1 note(s)
 
@@ -59,5 +59,5 @@ Result: **🔴 15 confirmed issue(s)** · 2 warning(s) · 1 note(s)
 
 ## Notes
 
-- `GLOBAL` **ssl_expiring_transient** — failed once, passed on confirmation re-fetch (likely cache/transient): TLS certificate for enormousdoor.com expires in 14 day(s) — Squarespace should auto-renew; investigate why it hasn't
+- `GLOBAL` **ssl_ok** — TLS certificate valid for 73 more days
 
