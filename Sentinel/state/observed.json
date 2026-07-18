@@ -5,7 +5,7 @@
       "text_hash": "38c487540d8ec543",
       "title": "Heavy Music Mastering | Enormous Door Mastering",
       "h1": "HEAVY MUSIC MASTERING",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/pricing": {
@@ -13,7 +13,7 @@
       "text_hash": "605c07f49071ba41",
       "title": "Heavy Music Mastering Pricing | Enormous Door Mastering \u2014 ENORMOUS DOOR MASTERING",
       "h1": "Heavy Music Mastering PRICING",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/beyond-heavy": {
@@ -21,7 +21,7 @@
       "text_hash": "51a9b8174de0027e",
       "title": "Beyond Heavy Mastering | Jack Control + Maor Appelbaum \u2014 ENORMOUS DOOR MASTERING",
       "h1": "BEYOND HEAVY MASTERING",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/launch-contact": {
@@ -29,7 +29,7 @@
       "text_hash": "8778e0c25cb65900",
       "title": "Start Your Project | Mixing & Heavy Music Mastering \u2014 ENORMOUS DOOR MASTERING",
       "h1": "START YOUR PROJECT",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/technical-faq": {
@@ -37,7 +37,7 @@
       "text_hash": "e11222c6865d45d9",
       "title": "Mix Prep for Mastering | Heavy Music Mastering Specs \u2014 ENORMOUS DOOR MASTERING",
       "h1": "MIX PREP & DELIVERY SPECS",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/mixing": {
@@ -45,7 +45,7 @@
       "text_hash": "cb383ce303ae583f",
       "title": "Heavy Music Mixing | Enormous Door Mixing Team \u2014 ENORMOUS DOOR MASTERING",
       "h1": "HEAVY MUSIC MIXING",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/vinyl-mastering": {
@@ -53,7 +53,7 @@
       "text_hash": "10bdfd8f376b6973",
       "title": "Vinyl Mastering for Heavy Music \u2014 ENORMOUS DOOR MASTERING",
       "h1": "VINYL MASTERING",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/vinyl-pressing": {
@@ -61,7 +61,7 @@
       "text_hash": "74faf4a0d0583ebc",
       "title": "Vinyl Pressing with Helios Press \u2014 ENORMOUS DOOR MASTERING",
       "h1": "VINYL PRESSING",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/vinyl-times": {
@@ -69,7 +69,7 @@
       "text_hash": "e80e1d72a9e03e9d",
       "title": "Vinyl Side Lengths, RPM & Sequencing \u2014 ENORMOUS DOOR MASTERING",
       "h1": "VINYL SIDE LENGTH GUIDE",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/how-to-proceed": {
@@ -77,7 +77,7 @@
       "text_hash": "e8be155376e5b1d9",
       "title": "How to Start a Mixing or Mastering Project \u2014 ENORMOUS DOOR MASTERING",
       "h1": "HOW TO START YOUR PROJECT",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/clients": {
@@ -85,7 +85,7 @@
       "text_hash": "f595dd1e01b8d3d1",
       "title": "Heavy Music Mastering Clients | Enormous Door Mastering \u2014 ENORMOUS DOOR MASTERING",
       "h1": "HEAVY MUSIC MASTERING CLIENTS",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/gear": {
@@ -93,14 +93,14 @@
       "text_hash": "c38a82e5687f66e8",
       "title": "Analog Mastering Gear & Monitoring | Enormous Door Mastering \u2014 ENORMOUS DOOR MASTERING",
       "h1": "ANALOG MASTERING GEAR & MONITORING",
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 200
     },
     "/about": {
-      "last_checked": "2026-07-17 10:13 UTC",
+      "last_checked": "2026-07-18 09:46 UTC",
       "status": 404
     }
   },
-  "runs": 8,
-  "last_run": "2026-07-17 10:13 UTC"
+  "runs": 9,
+  "last_run": "2026-07-18 09:46 UTC"
 }
