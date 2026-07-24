@@ -1,4 +1,4 @@
-## 🔴 Site Sentinel — 12 confirmed issue(s) · 2026-07-23 10:36 UTC
+## 🔴 Site Sentinel — 16 confirmed issue(s) · 2026-07-24 10:29 UTC
 
 Each issue below failed an initial check **and** a fresh cache-busted re-fetch, so these are not cache ghosts.
 
@@ -43,6 +43,10 @@ Each issue below failed an initial check **and** a fresh cache-busted re-fetch, 
   ```
   prices found: []
   ```
+- **`/launch-contact`** · `noindex` — page is served with a noindex directive
+- **`/launch-contact`** · `required_link` — no <a> pointing to /technical-faq#mix-prep (bare /technical-faq exists — anchor was dropped; in Squarespace, paste the full path into the URL field rather than picking the page from the dropdown)
+- **`/launch-contact`** · `required_pattern` — pattern not found: 'Band Name'
+- **`/launch-contact`** · `required_pattern` — pattern not found: 'Mixing and Mastering'
 - **`/technical-faq`** · `anchor_target` — no element with id="mix-prep" — sitewide #mix-prep links will not jump
 - **`/mixing`** · `title` — <title> missing expected text
   
