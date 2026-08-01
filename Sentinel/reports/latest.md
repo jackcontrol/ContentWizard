@@ -1,6 +1,6 @@
-# Sentinel run — 2026-07-31 11:01 UTC
+# Sentinel run — 2026-08-01 10:12 UTC
 
-Result: **🔴 16 confirmed issue(s)** · 1 warning(s) · 1 note(s)
+Result: **🔴 16 confirmed issue(s)** · 2 warning(s) · 1 note(s)
 
 ## Confirmed failures
 
@@ -59,9 +59,10 @@ Result: **🔴 16 confirmed issue(s)** · 1 warning(s) · 1 note(s)
 
 ## Warnings
 
-- `GLOBAL` **sitemap_fetch** — sitemap not readable (status 503)
+- `/launch-contact` **sitemap_missing** — page not listed in sitemap.xml
+- `/about` **sitemap_missing** — page not listed in sitemap.xml
 
 ## Notes
 
-- `GLOBAL` **ssl_ok** — TLS certificate valid for 55 more days
+- `GLOBAL` **ssl_ok** — TLS certificate valid for 54 more days
 
