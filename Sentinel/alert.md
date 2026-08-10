@@ -1,4 +1,4 @@
-## 🔴 Site Sentinel — 16 confirmed issue(s) · 2026-08-09 09:04 UTC
+## 🔴 Site Sentinel — 16 confirmed issue(s) · 2026-08-10 09:49 UTC
 
 Each issue below failed an initial check **and** a fresh cache-busted re-fetch, so these are not cache ghosts.
 
