@@ -1,6 +1,6 @@
-# Sentinel run — 2026-09-09 12:59 UTC
+# Sentinel run — 2026-09-10 12:56 UTC
 
-Result: **🔴 16 confirmed issue(s)** · 2 warning(s) · 2 note(s)
+Result: **🔴 16 confirmed issue(s)** · 2 warning(s) · 1 note(s)
 
 ## Confirmed failures
 
@@ -64,20 +64,5 @@ Result: **🔴 16 confirmed issue(s)** · 2 warning(s) · 2 note(s)
 
 ## Notes
 
-- `GLOBAL` **ssl_ok** — TLS certificate valid for 70 more days
-- `/` **content_changed** — page content changed (last change 2026-07-10 16:37 UTC -> now)
-  
-  ```
-  --- previous
-+++ current
-@@ -13,6 +13,8 @@
- Your mix is balanced, ready for a high-level release You want punch, clarity, and defined emotion (not just loud) You're open to making mix adjustments if asked AWARD-WINNING HEAVY MASTERING RUÏM wins the Norwegian Spellemann award for "Best Metal Album 2023" RUÏM Black Royal Spiritism..
- LP (Peaceville Records) Mastered by Jack Control VOIVOD wins the Canadian Juno award for "Best Metal Album 2023" VOIVOD Synchro Anarchy LP (Century Media Records) Mastered by Maor Appelbaum HEAR THE MASTERING DIFFERENCE Play the before/after videos to hear how mastering can add impact, clarity, weight, and translation without losing the character of the mix
- Real feedback from heavy bands mastered by Enormous Door, including black metal, doom, hardcore, punk, death metal, and extreme releases
-+Newsletter Block This newsletter signup form needs a storage option
-+Edit the block and enter a storage location via the Storage tab
- NOT QUITE READY? Get the Mix-Prep PDF, or review the full Mix Prep & Delivery Specs before sending final files
- Email Address Get The PDF We respect your privacy
- We aren’t going to spam you
-  ```
+- `GLOBAL` **ssl_ok** — TLS certificate valid for 69 more days
 
