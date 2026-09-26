@@ -1,4 +1,4 @@
-# Sentinel run — 2026-09-25 13:50 UTC
+# Sentinel run — 2026-09-26 13:08 UTC
 
 Result: **🔴 16 confirmed issue(s)** · 2 warning(s) · 1 note(s)
 
@@ -64,5 +64,5 @@ Result: **🔴 16 confirmed issue(s)** · 2 warning(s) · 1 note(s)
 
 ## Notes
 
-- `GLOBAL` **ssl_ok** — TLS certificate valid for 54 more days
+- `GLOBAL` **ssl_ok** — TLS certificate valid for 53 more days
 
